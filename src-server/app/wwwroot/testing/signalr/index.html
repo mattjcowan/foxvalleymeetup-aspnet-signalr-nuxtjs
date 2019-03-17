@@ -50,7 +50,10 @@
                                 </label>
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-primary">Send</button>
+                        <button type="submit" class="btn btn-primary mb-2">Send</button>
+                        <div class="form-group" style="background-color: #eee;">
+                            <input type="text" class="form-control" id="accessTokenInput" name="accessToken" aria-describedby="accessTokenHelp" placeholder="Enter access token">
+                        </div>
                     </form>
                 </div>
                 <div class="col-8">
@@ -78,7 +81,11 @@
 
             var connection = new signalR
                 .HubConnectionBuilder()
-                .withUrl("/hub")
+                .withUrl("/hub", {
+                    accessTokenFactory: function () {
+                        return getParameterByName('access_token'); //'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IjEiLCJuYmYiOjE1NTI4MDMyNjIsImV4cCI6MTU1MzQwODA2MiwiaWF0IjoxNTUyODAzMjYyfQ.RE9_0EJ2lW8OsInNMPRHTAxziIDKKlC9bg-upn0e5dk';
+                    }
+                })
                 .configureLogging(signalR.LogLevel.Information)
                 .build();
 
@@ -120,6 +127,12 @@
                         return console.error(err);
                     });
             })
+
+            document
+                .getElementById('accessTokenInput')
+                .addEventListener("change", function (event) {
+                    window.location.href = '/testing/signalr/?access_token=' + event.target.value;
+                });
         </script>
     </body>
 </html>

@@ -15,7 +15,11 @@ namespace app
 
             Console.WriteLine($"User { user?.Identity.Name ?? "unknown" } connected (cid: {connectionId})");
 
-            await Groups.AddToGroupAsync(Context.ConnectionId, "Users");
+            if (user?.Identity.Name != null)
+            {
+                await Groups.AddToGroupAsync(Context.ConnectionId, "Users");
+            }
+
             await base.OnConnectedAsync();
         }
 
@@ -25,14 +29,20 @@ namespace app
             var user = Context.User;
 
             Console.WriteLine($"User { user?.Identity.Name ?? "unknown" } disconnected (cid: {connectionId})");
-            //cool
 
-            await Groups.RemoveFromGroupAsync(Context.ConnectionId, "Users");
+            if (user?.Identity.Name != null)
+            {
+                await Groups.RemoveFromGroupAsync(Context.ConnectionId, "Users");
+            }
+
             await base.OnDisconnectedAsync(exception);
         }
 
         public Task SendMessage(HubMessage message)
         {
+            var user = Context.User;
+            Console.WriteLine($"User { user?.Identity.Name ?? "unknown" } sending message");
+
             switch (message.Audience)
             {
                 case HubMessageAudience.Caller:
