@@ -23,11 +23,11 @@ namespace app.Controllers
         private readonly AppSettings _appSettings;
 
         public AuthController(
-            IAuthRepository userService,
+            IAuthRepository authRepository,
             IMapper mapper,
             IOptions<AppSettings> appSettings)
         {
-            _authRepository = userService;
+            _authRepository = authRepository;
             _mapper = mapper;
             _appSettings = appSettings.Value;
         }

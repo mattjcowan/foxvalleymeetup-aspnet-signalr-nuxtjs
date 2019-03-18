@@ -25,15 +25,6 @@ namespace app.Repositories
         public string Password { get; set; }
     }
 
-    public class AutoMapperProfile : Profile
-    {
-        public AutoMapperProfile()
-        {
-            CreateMap<User, UserDto>();
-            CreateMap<UserDto, User>();
-        }
-    }
-
     public interface IAuthRepository
     {
         Task<User> Authenticate(string username, string password);
@@ -42,6 +33,15 @@ namespace app.Repositories
         User Create(User user, string password);
         void Update(User user, string password = null);
         void Delete(int id);
+    }
+    
+    public class AutoMapperProfile : Profile
+    {
+        public AutoMapperProfile()
+        {
+            CreateMap<User, UserDto>();
+            CreateMap<UserDto, User>();
+        }
     }
 
     public class AuthRepository : IAuthRepository
