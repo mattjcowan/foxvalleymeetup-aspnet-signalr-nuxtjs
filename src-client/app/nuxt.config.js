@@ -1,4 +1,8 @@
+import axios from 'axios'
 import pkg from './package'
+
+// disregard SSL cert errors while developing
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
 export default {
   mode: 'spa',
@@ -29,7 +33,7 @@ export default {
   /*
    ** Plugins to load before mounting the App
    */
-  plugins: [],
+  plugins: ['~/plugins/extendAxios'],
 
   /*
    ** Nuxt.js modules
@@ -63,5 +67,16 @@ export default {
         })
       }
     }
+  },
+
+  generate: {
+    // dir: 'dist',
+    // routes: function () {
+    //   return axios.get('https://goodreads/bookmarks').then(res => {
+    //     return res.data.map(bookmark => {
+    //       return '/bookmarks/' + bookmark.id
+    //     })
+    //   })
+    // }
   }
 }

@@ -9,7 +9,9 @@
     "bump:major": "node ./scripts/bump.js --dir=src-server --increment=major",
     "bump:minor": "node ./scripts/bump.js --dir=src-server --increment=minor",
     "bump:patch": "node ./scripts/bump.js --dir=src-server --increment=patch",
-    "deploy": "./scripts/deploy.sh"
+    "deploy": "node ./scripts/bump.js --dir=src-server && ./scripts/deploy.sh",
+    "server": "cd src-server/app && dotnet watch run",
+    "client": "cd src-client/app && npm run dev"
   },
   "repository": {
     "type": "git",

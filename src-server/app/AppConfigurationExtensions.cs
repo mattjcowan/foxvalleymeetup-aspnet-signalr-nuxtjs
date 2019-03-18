@@ -209,7 +209,7 @@ namespace app
                         {
                             Name = "Matt Cowan",
                                 Email = string.Empty,
-                                Url = "https://github.com/mattjcowan"
+                                Url = "https://github.com/mattjcowan/foxvalleymeetup-aspnet-signalr-nuxtjs"
                         },
                         License = new License
                         {

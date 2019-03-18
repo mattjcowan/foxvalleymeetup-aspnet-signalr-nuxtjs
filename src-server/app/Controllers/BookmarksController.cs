@@ -18,7 +18,7 @@ namespace app.Controllers
 {
     [Authorize]
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class BookmarksController : ControllerBase
     {
         private IAuthRepository _authRepository;

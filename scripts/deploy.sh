@@ -7,7 +7,8 @@ dir=$(pwd)
 cd $dir
 
 # set some variables
-local_src=$dir/src-server/app       # assumes app is at this location
+local_src_server=$dir/src-server/app       # assumes app is at this location
+local_src_client=$dir/src-client/app       # assumes app is at this location
 local_path=$dir/dist                # local deployment location
 remote_server=demoserver            # remote server ip
 remote_user=root                    # remote user
@@ -15,10 +16,14 @@ remote_service=app                  # name of system.d service
 remote_path=/var/www/app/dist       # deployment path
 
 # publish app locally
-cd $local_src
+cd $local_src_server
 npm install
 dotnet publish -c release -r ubuntu.16.04-x64 -o $local_path
 chmod +x $local_path/app
+cd $local_src_client
+npm install
+npm run generate
+cp -r $local_src_client/dist/* $local_path/wwwroot
 
 # rsync app to remote server
 ssh $remote_user@$remote_server "sudo chown -R $remote_user:$remote_user $remote_path"
