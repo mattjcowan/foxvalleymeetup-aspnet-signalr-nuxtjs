@@ -1,0 +1,30 @@
+{
+  "name": "foxvalleymeetup-aspnet-signalr-nuxtjs",
+  "version": "1.0.0",
+  "description": "Building Apps with VueJS, NuxtJS, SignalR and .NET core",
+  "main": "index.js",
+  "scripts": {
+    "bump": "node ./scripts/bump.js --dir=src-server && git add . && git commit -m 'version bump'",
+    "bump:set": "node ./scripts/bump.js --dir=src-server --set=1.0.0.0",
+    "bump:major": "node ./scripts/bump.js --dir=src-server --increment=major",
+    "bump:minor": "node ./scripts/bump.js --dir=src-server --increment=minor",
+    "bump:patch": "node ./scripts/bump.js --dir=src-server --increment=patch",
+    "deploy": "./scripts/deploy.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mattjcowan/foxvalleymeetup-aspnet-signalr-nuxtjs.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mattjcowan/foxvalleymeetup-aspnet-signalr-nuxtjs/issues"
+  },
+  "homepage": "https://github.com/mattjcowan/foxvalleymeetup-aspnet-signalr-nuxtjs#readme",
+  "devDependencies": {
+    "args-parser": "1.1.0",
+    "filehound": "1.16.7",
+    "fs-extra": "7.0.1"
+  }
+}

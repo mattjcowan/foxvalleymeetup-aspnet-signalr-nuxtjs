@@ -222,7 +222,7 @@ namespace app.Repositories
             if (_screenshotTaker == null)
                 return;
 
-            var uploadsDirectory = Path.Combine(_env.ContentRootPath, "App_Data", "Uploads");
+            var uploadsDirectory = Path.GetFullPath(Path.Combine(_env.ContentRootPath, "..", "data", "uploads"));
             if (!Directory.Exists(uploadsDirectory))
                 Directory.CreateDirectory(uploadsDirectory);
 

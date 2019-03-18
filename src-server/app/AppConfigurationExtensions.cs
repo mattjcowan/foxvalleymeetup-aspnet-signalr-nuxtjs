@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using app.Repositories;
@@ -25,14 +26,18 @@ namespace app
 {
     public static class AppConfigurationExtensions
     {
-        public static void AddAppConfiguration(this IServiceCollection services, IConfiguration configuration)
+        public static void AddAppConfiguration(this IServiceCollection services, IConfiguration configuration, IHostingEnvironment env)
         {
+            var dataDir = Path.GetFullPath(Path.Combine(env.ContentRootPath, "..", "data"));
+            Directory.CreateDirectory(dataDir);
+
             var appSettings = services.AddAppSettings(configuration);
             services.AddAppHeaders(appSettings);
             services.AddAppAuth(appSettings);
             services.AddAppDocs(appSettings);
             services.AddAppServices(appSettings);
-            services.AddAppDbContext(configuration.GetConnectionString("DefaultConnection"));
+
+            services.AddAppDbContext(configuration.GetConnectionString("DefaultConnection").Replace("~data", dataDir));
 
             services.AddRouting(options => options.LowercaseUrls = true);
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
@@ -74,7 +79,7 @@ namespace app
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", appSettings.Title);
-                c.RoutePrefix = string.Empty;
+                // c.RoutePrefix = string.Empty;
 
                 c.DocumentTitle = appSettings.Title;
                 c.DocExpansion(DocExpansion.None);
@@ -196,7 +201,7 @@ namespace app
             {
                 c.SwaggerDoc("v" + appSettings.MajorVersion, new Info
                 {
-                    Version = "v" + appSettings.MajorVersion,
+                    Version = "v" + typeof(Startup).Assembly.GetName().Version,
                         Title = appSettings.Title,
                         Description = appSettings.Description,
                         TermsOfService = "None",

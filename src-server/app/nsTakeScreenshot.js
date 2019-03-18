@@ -1,4 +1,5 @@
 const webshot = require('webshot')
+const os = require("os")
 
 module.exports = function (callback, url, imageName) {
     // const optionsMobile = {
@@ -10,7 +11,7 @@ module.exports = function (callback, url, imageName) {
     //         width: 400,
     //         height: 'all'
     //     },
-    //     userAgent: 'Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.20 (KHTML, like Gecko) Mobile/7B298g'
+    //     userAgent: 'Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.20 (KHTML, li$
     // }
     // most common based on: https://www.rapidtables.com/web/dev/screen-resolution-statistics.html
     const options = {
@@ -21,8 +22,10 @@ module.exports = function (callback, url, imageName) {
         shotSize: {
             width: 1366,
             height: 768
-        },
-        userAgent: 'Mozilla/5.0 (iPad; CPU OS 11_0 like Mac OS X) AppleWebKit/604.1.34 (KHTML, like Gecko) Version/11.0 Mobile/15A5341f Safari/604.1'
+        }
+    }
+    if (os.type() === 'Linux') {
+        options.phantomPath = '/usr/local/bin/phantomjs'
     }
     webshot(url, imageName, options, function (err) {
         if (!err) {
