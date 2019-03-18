@@ -2,7 +2,6 @@
   "name": "app",
   "version": "1.0.0",
   "description": "",
-  "main": "nsTakeScreenshot.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -10,8 +9,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "url-to-image": "1.0.0",
-    "url-to-screenshot": "3.0.0",
     "webshot": "0.18.0"
   }
 }
