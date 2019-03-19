@@ -34,7 +34,7 @@ namespace app.Repositories
         void Update(User user, string password = null);
         void Delete(int id);
     }
-    
+
     public class AutoMapperProfile : Profile
     {
         public AutoMapperProfile()
@@ -55,6 +55,8 @@ namespace app.Repositories
 
         public Task<User> Authenticate(string username, string password)
         {
+            Console.WriteLine("Authenticating user '" + username + "'");
+
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
                 return null;
 
@@ -62,11 +64,11 @@ namespace app.Repositories
 
             // check if username exists
             if (user == null)
-                return null;
+                return Task.FromResult((User) null);
 
             // check if password is correct
             if (!VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
-                return null;
+                return Task.FromResult((User) null);
 
             // authentication successful
             return Task.FromResult(user);

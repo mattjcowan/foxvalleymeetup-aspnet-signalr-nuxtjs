@@ -1,6 +1,6 @@
 # foxvalleymeetup-aspnet-signalr-nuxtjs
 
-Building Apps with VueJS, NuxtJS, SignalR and .NET core
+Speaker notes for `Building Apps with VueJS, NuxtJS, SignalR and .NET core`
 
 ## Pre-requisites
 
@@ -39,6 +39,14 @@ To add migrations
 dotnet ef migrations add NAME_FOR_MIGRATIONS
 ```
 
+### Adding Auth
+
+See `Startup.cs`
+
+### Adding SignalR
+
+See `Startup.cs`
+
 ## Client setup
 
 Install and run client at http://localhost:3000
@@ -50,3 +58,30 @@ npx create-nuxt-app app
 cd app
 npm run dev
 ```
+
+### Adding bootstrap (modules)
+
+Adding bootstrap (see https://bootstrap-vue.js.org/docs/#nuxt-js)
+
+```sh
+npm i -D @nuxtjs/style-resources node-sass sass-loader
+npm i bootstrap-vue
+```
+
+See usage in `nuxt.config.js` and `~/assets` directory.
+
+### Adding proxy
+
+```sh
+npm i -D @nuxtjs/proxy
+```
+
+### Adding signalr
+
+```sh
+npm i @aspnet/signalr
+```
+
+## Deploying
+
+See `scripts/deploy.sh` and the `app` repo at https://github.com/mattjcowan/app

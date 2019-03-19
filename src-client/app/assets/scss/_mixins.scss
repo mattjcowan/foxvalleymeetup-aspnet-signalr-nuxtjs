@@ -1,0 +1,14 @@
+// Example how to use a mixin in your components/pages
+// <style lang="scss">
+//   .ymca {
+//     @include center; // will be resolved as position:absolute....
+//     color: $gray; // will be resolved to #333
+//   }
+// </style>
+
+@mixin center() {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate3d(-50%, -50%, 0);
+}
