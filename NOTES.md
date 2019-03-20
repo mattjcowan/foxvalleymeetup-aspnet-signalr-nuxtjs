@@ -82,6 +82,14 @@ npm i -D @nuxtjs/proxy
 npm i @aspnet/signalr
 ```
 
+### Adding auth
+
+See: https://nuxtjs.org/examples/auth-external-jwt/
+
+```sh
+npm i js-cookie jwt-decode query-string@5 vuex-persistedstate
+```
+
 ## Deploying
 
 See `scripts/deploy.sh` and the `app` repo at https://github.com/mattjcowan/app

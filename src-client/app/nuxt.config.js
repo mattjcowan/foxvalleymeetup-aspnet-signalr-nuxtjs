@@ -65,7 +65,19 @@ export default {
   /*
    ** Plugins to load before mounting the App
    */
-  plugins: ['~/plugins/extendAxios'],
+  plugins: [
+    { src: '~/plugins/localStorage.js', ssr: false },
+    { src: '~/plugins/extendAxios', ssr: false },
+    { src: '~/plugins/vue2-filters', ssr: false },
+    { src: '~/plugins/signalrHub', ssr: false }
+  ],
+
+  /*
+   ** Tap into Router
+   */
+  router: {
+    middleware: ['check-auth']
+  },
 
   /*
    ** Nuxt.js modules
@@ -73,6 +85,7 @@ export default {
   modules: [
     // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios',
+    '@nuxtjs/font-awesome',
     'bootstrap-vue/nuxt',
     '@nuxtjs/style-resources'
   ],
@@ -96,6 +109,8 @@ export default {
   },
 
   proxy: {
+    '/testing': apiOptions,
+    '/uploads': apiOptions,
     '/api': apiOptions,
     '/swagger': apiOptions,
     '/hub': Object.assign(apiOptions, { ws: true }) // signalr endpoint

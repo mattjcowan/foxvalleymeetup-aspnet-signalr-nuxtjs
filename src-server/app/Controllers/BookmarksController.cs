@@ -9,6 +9,7 @@ using app.Repositories;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using ServiceStack;
@@ -21,6 +22,11 @@ namespace app.Controllers
     [Route("api/[controller]")]
     public class BookmarksController : ControllerBase
     {
+        public const string HUBMESSAGE_BOOKMARK_CREATED = "bookmark_created";
+        public const string HUBMESSAGE_BOOKMARK_UPDATED = "bookmark_updated";
+        public const string HUBMESSAGE_BOOKMARK_DELETED = "bookmark_deleted";
+
+        private readonly IHubContext<AppHub> _hubContext;
         private IAuthRepository _authRepository;
         private readonly AppSettings _appSettings;
         private readonly IBookmarksRepository _bookmarksRepository;
@@ -28,18 +34,32 @@ namespace app.Controllers
         public BookmarksController(
             IAuthRepository authRepository,
             IBookmarksRepository bookmarksRepository,
-            IOptions<AppSettings> appSettings)
+            IOptions<AppSettings> appSettings,
+            IHubContext<AppHub> hubContext)
         {
             _authRepository = authRepository;
             _bookmarksRepository = bookmarksRepository;
             _appSettings = appSettings.Value;
+            _hubContext = hubContext;
         }
 
         [AllowAnonymous]
         [HttpGet]
-        public IActionResult GetAll()
+        public IActionResult GetAll(
+            [FromQuery(Name = "skip")] int skip = 0, [FromQuery(Name = "take")] int take = 0, [FromQuery(Name = "q")] string q = null)
         {
-            var bookmarks = _bookmarksRepository.GetAll().OrderByDescending(d => d.CreateDate).ToList();
+            var query =
+                _bookmarksRepository.GetAll().OrderByDescending(d => d.CreateDate)
+                .Where(r =>
+                    r.Title.Contains(q ?? "", StringComparison.OrdinalIgnoreCase) || (
+                        r.Description != null && r.Description.Contains(q ?? "", StringComparison.OrdinalIgnoreCase))
+                );
+            var bookmarks = (skip >= 0 && take > 0) ?
+                query
+                .Skip(skip)
+                .Take(take)
+                .ToList() :
+                query.ToList();
             var createdByIds = bookmarks.Select(b => b.CreatedById).Distinct();
             var modifiedByIds = bookmarks.Select(b => b.ModifiedById).Distinct();
             var users = _authRepository.GetAll().Where(u => createdByIds.Contains(u.Id) || modifiedByIds.Contains(u.Id)).ToList();
@@ -61,16 +81,7 @@ namespace app.Controllers
         [HttpGet("{id}")]
         public IActionResult GetById(Guid id)
         {
-            var bookmark = _bookmarksRepository.GetById(id);
-            var createdBy = _authRepository.GetById(bookmark.CreatedById)?.ConvertTo<UserInfo>();
-            var modifiedBy = _authRepository.GetById(bookmark.ModifiedById)?.ConvertTo<UserInfo>();
-
-            var dto = new BookmarkDto().PopulateWith(bookmark);
-            dto.CreatedBy = createdBy;
-            dto.ModifiedBy = modifiedBy;
-            dto.MetaTags = bookmark.MetaTagsJson?.FromJson<List<Dictionary<string, object>>>();
-
-            return Ok(dto);
+            return Ok(GetDtoById(id));
         }
 
         [HttpPost]
@@ -82,17 +93,28 @@ namespace app.Controllers
             bookmark.CreatedById = userId;
             bookmark.ModifiedById = userId;
 
+            BookmarkDto dto = null;
             try
             {
                 // save 
                 bookmark = await _bookmarksRepository.Create(bookmark);
-                return GetById(bookmark.Id);
+                dto = GetDtoById(bookmark.Id);
             }
             catch (AppException ex)
             {
                 // return error message if there was an exception
                 return BadRequest(new { message = ex.Message });
             }
+
+            await _hubContext.SendMessage(new HubMessage
+            {
+                Action = HUBMESSAGE_BOOKMARK_CREATED,
+                    Data = new Dictionary<string, object>
+                    { { "bookmark", dto }
+                    }
+            });
+
+            return Ok(dto);
         }
 
         [HttpPut("{id}")]
@@ -104,24 +126,68 @@ namespace app.Controllers
             bookmark.Id = id;
             bookmark.ModifiedById = userId;
 
+            BookmarkDto dto = null;
             try
             {
                 // save 
                 bookmark = await _bookmarksRepository.Update(bookmark);
-                return GetById(bookmark.Id);
+                dto = GetDtoById(bookmark.Id);
             }
             catch (AppException ex)
             {
                 // return error message if there was an exception
                 return BadRequest(new { message = ex.Message });
             }
+
+            await _hubContext.SendMessage(new HubMessage
+            {
+                Action = HUBMESSAGE_BOOKMARK_UPDATED,
+                    Data = new Dictionary<string, object>
+                    { { "bookmark", dto }
+                    }
+            });
+
+            return Ok(dto);
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(Guid id)
+        public async Task<IActionResult> Delete(Guid id)
         {
-            _bookmarksRepository.Delete(id);
+            BookmarkDto dto = null;
+            try
+            {
+                _bookmarksRepository.Delete(id);
+                dto = new BookmarkDto { Id = id };
+            }
+            catch (AppException ex)
+            {
+                // return error message if there was an exception
+                return BadRequest(new { message = ex.Message });
+            }
+
+            await _hubContext.SendMessage(new HubMessage
+            {
+                Action = HUBMESSAGE_BOOKMARK_DELETED,
+                    Data = new Dictionary<string, object>
+                    { { "bookmark", dto }
+                    }
+            });
+
             return Ok();
+        }
+
+        private BookmarkDto GetDtoById(Guid id)
+        {
+            var bookmark = _bookmarksRepository.GetById(id);
+            var createdBy = _authRepository.GetById(bookmark.CreatedById)?.ConvertTo<UserInfo>();
+            var modifiedBy = _authRepository.GetById(bookmark.ModifiedById)?.ConvertTo<UserInfo>();
+
+            var dto = new BookmarkDto().PopulateWith(bookmark);
+            dto.CreatedBy = createdBy;
+            dto.ModifiedBy = modifiedBy;
+            dto.MetaTags = bookmark.MetaTagsJson?.FromJson<List<Dictionary<string, object>>>();
+
+            return dto;
         }
     }
 }

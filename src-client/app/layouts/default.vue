@@ -1,20 +1,29 @@
 <template>
-  <div>
+  <div class="layout">
     <app-nav />
-    <div class="container-fluid">
+    <div class="container">
       <nuxt />
     </div>
+    <app-footer />
   </div>
 </template>
 
 <script>
-import AppNav from '~/components/Nav.vue'
+import AppNav from '~/components/AppNav.vue'
+import AppFooter from '~/components/AppFooter.vue'
 
 export default {
   components: {
-    AppNav
+    AppNav,
+    AppFooter
   }
 }
 </script>
 
-<style></style>
+<style lang="scss" scoped>
+.container {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  min-height: calc(100vh - 186px);
+}
+</style>

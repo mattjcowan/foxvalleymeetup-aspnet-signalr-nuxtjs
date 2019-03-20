@@ -60,6 +60,21 @@ namespace app
         }
     }
 
+    public static class AppHubExtensions
+    {
+        public static async Task SendMessage(this IHubContext<AppHub> hubContext, HubMessage message)
+        {
+            try 
+            {
+                await hubContext.Clients.All.SendAsync("ReceiveMessage", message);
+            } 
+            catch(Exception ex) 
+            {
+                Console.WriteLine("HubMessage send exception: {0}", ex);
+            }
+        }
+    }
+
     public class HubMessage
     {
         public HubMessageAudience? Audience { get; set; }

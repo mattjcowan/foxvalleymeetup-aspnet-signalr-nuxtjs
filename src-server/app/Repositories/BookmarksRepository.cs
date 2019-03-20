@@ -100,7 +100,10 @@ namespace app.Repositories
             bookmark.Id = Guid.NewGuid();
 
             await TryPopulateBookmarkAsync(bookmark);
-            await TryTakeScreenshotAsync(bookmark);
+            if (string.IsNullOrWhiteSpace(bookmark.Screenshot))
+            {
+                await TryTakeScreenshotAsync(bookmark);
+            }
 
             bookmark.CreateDate = DateTime.UtcNow;
             bookmark.ModifiedDate = DateTime.UtcNow;
@@ -129,7 +132,10 @@ namespace app.Repositories
             existing.PopulateWithNonDefaultValues(bookmark);
 
             await TryPopulateBookmarkAsync(existing);
-            await TryTakeScreenshotAsync(existing);
+            if (string.IsNullOrWhiteSpace(bookmark.Screenshot))
+            {
+                await TryTakeScreenshotAsync(bookmark);
+            }
 
             bookmark.ModifiedDate = DateTime.UtcNow;
 
@@ -182,16 +188,41 @@ namespace app.Repositories
                 var metaTagsList = new List<Dictionary<string, object>>();
                 foreach (var metaTag in headTag.Descendants("meta"))
                 {
-                    var attName = metaTag.GetAttributeValue("name", null);
-                    if (attName == "description")
+                    var metaRefName = metaTag.GetAttributeValue("name", null);
+                    if (string.IsNullOrWhiteSpace(metaRefName))
+                    {
+                        metaRefName = metaTag.GetAttributeValue("property", null);
+                    }
+
+                    // preliminary rules
+                    if (metaRefName == "og:description" && string.IsNullOrWhiteSpace(bookmark.Description))
                     {
                         bookmark.Description = metaTag.GetAttributeValue("content", "");
                     }
-                    else if (attName == "keywords")
+                    else if (metaRefName == "twitter:description" && string.IsNullOrWhiteSpace(bookmark.Description))
+                    {
+                        bookmark.Description = metaTag.GetAttributeValue("content", "");
+                    }
+
+                    if (metaRefName == "og:image" && string.IsNullOrWhiteSpace(bookmark.Screenshot))
+                    {
+                        bookmark.Screenshot = metaTag.GetAttributeValue("content", "");
+                    }
+                    else if (metaRefName == "twitter:image" && string.IsNullOrWhiteSpace(bookmark.Screenshot))
+                    {
+                        bookmark.Screenshot = metaTag.GetAttributeValue("content", "");
+                    }
+
+                    // principal rules
+                    if (metaRefName == "description")
+                    {
+                        bookmark.Description = metaTag.GetAttributeValue("content", "");
+                    }
+                    else if (metaRefName == "keywords")
                     {
                         bookmark.Keywords = metaTag.GetAttributeValue("content", "");
                     }
-                    else if (attName == "author")
+                    else if (metaRefName == "author")
                     {
                         bookmark.Author = metaTag.GetAttributeValue("content", "");
                     }

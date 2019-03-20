@@ -2,30 +2,16 @@ import { version, name, description } from '~/package.json'
 
 export const nav = [
   {
-    title: 'Home',
-    base: '',
+    iclass: 'fa fa-bookmark',
+    title: 'Bookmarks',
+    to: '/',
     exact: true
   },
   {
+    iclass: 'fa fa-book',
     title: 'Swagger',
-    base: 'swagger/',
-    exact: true
+    href: '/swagger/'
   }
-  // {
-  //   title: 'Directives',
-  //   base: 'directives/',
-  //   pages: directives
-  // },
-  // {
-  //   title: 'Reference',
-  //   base: 'reference/',
-  //   pages: reference
-  // },
-  // {
-  //   title: 'Misc',
-  //   base: 'misc/',
-  //   pages: misc
-  // }
 ]
 
 export { version, name, description }

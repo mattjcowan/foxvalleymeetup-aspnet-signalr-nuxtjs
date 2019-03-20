@@ -1,7 +1,16 @@
 <template>
-  <div>Logout</div>
+  <div></div>
 </template>
 
 <script>
-export default {}
+import { unsetToken } from '~/assets/js/auth'
+
+export default {
+  middleware: 'authenticated',
+  mounted() {
+    unsetToken()
+    this.$store.commit('setUser', null)
+    this.$router.push('/')
+  }
+}
 </script>

@@ -12,3 +12,47 @@ html {
   box-sizing: border-box;
   margin: 0;
 }
+
+html, body {
+  height: 100%;
+}
+
+
+// $grid-breakpoints: (
+//   xs: 0,
+//   sm: 576px,
+//   md: 768px,
+//   lg: 992px,
+//   xl: 1200px
+// );
+
+.card-deck {
+  .bookmark-card {
+    min-width: 100%;
+    max-width: 100%;
+    @media only screen and (min-width: map-get($grid-breakpoints, sm)) {
+      min-width: calc(50% - 30px);
+      max-width: calc(50% - 30px);
+    }
+    @media only screen and (min-width: map-get($grid-breakpoints, md)) {
+      min-width: calc(33% - 30px);
+      max-width: calc(33% - 30px);
+    }
+    @media only screen and (min-width: map-get($grid-breakpoints, lg)) {
+      min-width: calc(25% - 30px);
+      max-width: calc(25% - 30px);
+    }
+    @media only screen and (min-width: map-get($grid-breakpoints, xl)) {
+      min-width: calc(25% - 30px);
+      max-width: calc(25% - 30px);
+    }
+
+    h4.card-title {
+      font-size: 1.1rem;
+    }
+
+    .card-body {
+      padding: 0.5rem;
+    }
+  }
+}
