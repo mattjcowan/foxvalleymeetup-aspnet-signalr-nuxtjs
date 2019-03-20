@@ -1,0 +1,52 @@
+{
+  "name": "app",
+  "version": "1.0.0",
+  "description": "My terrific Nuxt.js project",
+  "author": "MJC",
+  "private": true,
+  "scripts": {
+    "dev": "nuxt",
+    "build": "nuxt build",
+    "start": "nuxt start",
+    "generate": "nuxt generate",
+    "lint": "eslint --fix --ext .js,.vue --ignore-path .gitignore .",
+    "precommit": "npm run lint"
+  },
+  "dependencies": {
+    "@aspnet/signalr": "1.1.2",
+    "@nuxtjs/axios": "^5.3.6",
+    "@nuxtjs/font-awesome": "1.0.3",
+    "bootstrap-vue": "2.0.0-rc.15",
+    "cookieparser": "0.1.0",
+    "cross-env": "^5.2.0",
+    "js-cookie": "2.2.0",
+    "jwt-decode": "2.2.0",
+    "moment": "2.24.0",
+    "nuxt": "^2.4.0",
+    "query-string": "5.1.1",
+    "vue2-filters": "0.5.1",
+    "vuex-persistedstate": "2.5.4"
+  },
+  "devDependencies": {
+    "@nuxtjs/eslint-config": "^0.0.1",
+    "@nuxtjs/proxy": "1.3.3",
+    "@nuxtjs/style-resources": "0.1.2",
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.15.1",
+    "eslint-config-prettier": "^4.1.0",
+    "eslint-config-standard": ">=12.0.0",
+    "eslint-loader": "^2.1.2",
+    "eslint-plugin-import": ">=2.16.0",
+    "eslint-plugin-jest": ">=22.3.0",
+    "eslint-plugin-node": ">=8.0.1",
+    "eslint-plugin-nuxt": ">=0.4.2",
+    "eslint-plugin-prettier": "^3.0.1",
+    "eslint-plugin-promise": ">=4.0.1",
+    "eslint-plugin-standard": ">=4.0.0",
+    "eslint-plugin-vue": "^5.2.2",
+    "node-sass": "4.11.0",
+    "nodemon": "^1.18.9",
+    "prettier": "^1.16.4",
+    "sass-loader": "7.1.0"
+  }
+}

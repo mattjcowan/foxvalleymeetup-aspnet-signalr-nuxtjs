@@ -1,0 +1,138 @@
+<html>
+
+    <head>
+        <title>Signalr Testing</title>
+        <!-- load bootstrap css -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    </head>
+
+    <body>
+
+        <div class="container pt-4">
+            <h3>Signalr Tests</h3>
+            <div class="row">
+                <div class="col-4">
+                    <h5>Form
+                        <span>(<a href="javascript:sampleData();">sample data</a>)</span></h5>
+                    <form id="hubForm" enctype="multipart/form-data" method="post">
+                        <div class="form-group">
+                            <label for="actionInput">Action</label>
+                            <input type="text" class="form-control" id="actionInput" name="action" aria-describedby="actionHelp" placeholder="Enter action">
+                            <small id="actionHelp" class="form-text text-muted">Put an action in this field.</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="groupInput">Group</label>
+                            <input type="text" class="form-control" id="groupInput" name="group" aria-describedby="groupHelp" placeholder="Enter group">
+                            <small id="userHelp" class="form-text text-muted">Put a group name in this field.</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="dataInput">Data</label>
+                            <textarea class="form-control" id="dataInput" name="data" aria-describedby="dataHelp" placeholder="Enter data" rows="4"></textarea>
+                            <small id="dataHelp" class="form-text text-muted">Put data in this field.</small>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="audience" id="allAudienceInput" value="all" checked="checked">
+                                <label class="form-check-label" for="allAudienceInput">
+                                    All
+                                </label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="audience" id="othersAudienceInput" value="others">
+                                <label class="form-check-label" for="othersAudienceInput">
+                                    Others
+                                </label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="audience" id="callerAudienceInput" value="caller">
+                                <label class="form-check-label" for="callerAudienceInput">
+                                    Caller
+                                </label>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary mb-2">Send</button>
+                        <div class="form-group" style="background-color: #eee;">
+                            <input type="text" class="form-control" id="accessTokenInput" name="accessToken" aria-describedby="accessTokenHelp" placeholder="Enter access token">
+                        </div>
+                    </form>
+                </div>
+                <div class="col-8">
+                    <h5>Messages</h5>
+                    <div id="messagesList"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- load bootstrap -->
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+        <!-- load signalr -->
+        <script src="https://cdn.jsdelivr.net/npm/@aspnet/signalr@1.1.0/dist/browser/signalr.min.js" integrity="sha256-QMSkR/7232j790y/zuvuopBbJS14B9e4hLLuz7KC9Fk=" crossorigin="anonymous"></script>
+
+        <!-- load convenience functions -->
+        <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.11/lodash.min.js" integrity="sha256-7/yoZS3548fXSRXqc/xYzjsmuW3sFKzuvOCHd06Pmps=" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/dompurify@1.0.10/dist/purify.min.js" integrity="sha256-sUyI169bxYQrBE0eTLEZND8u458gdCMPCYHyFvRCBWU=" crossorigin="anonymous"></script>
+        <script src="functions.js"></script>
+
+        <script>
+            "use strict";
+
+            var connection = new signalR
+                .HubConnectionBuilder()
+                .withUrl("/hub", {
+                    accessTokenFactory: function () {
+                        return getParameterByName('access_token'); //'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IjEiLCJuYmYiOjE1NTI4MDMyNjIsImV4cCI6MTU1MzQwODA2MiwiaWF0IjoxNTUyODAzMjYyfQ.RE9_0EJ2lW8OsInNMPRHTAxziIDKKlC9bg-upn0e5dk';
+                    }
+                })
+                .configureLogging(signalR.LogLevel.Information)
+                .build();
+
+            connection.on("ReceiveMessage", function (res) {
+                var div = convertToDiv(res.action, res.data);
+                var list = document.getElementById("messagesList")
+                list.insertBefore(div, list.childNodes[0])
+                //list.appendChild(div);
+            });
+
+            connection
+                .start()
+                .catch(function (err) {
+                    return console.error(err);
+                });
+
+            // with reconnect capability (async/await, not IE11 compatible)
+            async function start() {
+                try {
+                    await connection.start();
+                    console.log("connected");
+                } catch (err) {
+                    console.log(err);
+                    setTimeout(() => start(), 5000);
+                }
+            };
+
+            connection.onclose(async () => {
+                await start();
+            });
+
+            var form = document.getElementById("hubForm");
+            form.addEventListener("submit", function (event) {
+                event.preventDefault();
+                var message = convertFormToMessage(event.target);
+                connection
+                    .invoke("SendMessage", message)
+                    .catch(function (err) {
+                        return console.error(err);
+                    });
+            })
+
+            document
+                .getElementById('accessTokenInput')
+                .addEventListener("change", function (event) {
+                    window.location.href = '/testing/signalr/?access_token=' + event.target.value;
+                });
+        </script>
+    </body>
+</html>
