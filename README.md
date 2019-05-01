@@ -6,14 +6,18 @@ This repository is a quick weekend project demo of an app showcasing a variety o
 pertinent to building apps with the technologies listed above. I built this demo for a [local
 meetup in my area](https://www.meetup.com/Fox-Valley-NET-Web-Development-Meetup/events/259403666/)
 
-[A live demo is available here](https://goodreads.mattjcowan.com/) (but I will probably be removing it after the meetup)
+### Screenshots
 
-Some other stuff:
+| Dashboard      | Login      | API Docs    |
+|------------|-------------|-------------| 
+|  <img src="https://raw.githubusercontent.com/mattjcowan/foxvalleymeetup-aspnet-signalr-nuxtjs/master/screenshots/Screenshot%202019-05-01%2010.04.21.png" width="250"> | <img src="https://raw.githubusercontent.com/mattjcowan/foxvalleymeetup-aspnet-signalr-nuxtjs/master/screenshots/Screenshot%202019-05-01%2010.04.34.png" width="250"> | <img src="https://raw.githubusercontent.com/mattjcowan/foxvalleymeetup-aspnet-signalr-nuxtjs/master/screenshots/Screenshot%202019-05-01%2010.04.53.png" width="250"> |
+
+### Some other stuff:
 
 - [Slide deck](https://slides.com/mattjcowan/foxvalleymeetup-aspnet-signalr-nuxt)
 - [Speaker notes](NOTES.md)
 
-Interesting features in this repo:
+### Interesting features in this repo:
 
 - install/setup
     - ubuntu 16.04 vanilla vm bash script setup
